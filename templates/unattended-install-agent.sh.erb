@@ -1,0 +1,82 @@
+#!/bin/sh
+#AGENT_JAVA_HOME=/usr/java/latest
+AGENT_JAVA_HOME=/usr/java/latest
+CONNECT_VIA_RELAY=N
+INSTALL_AGENT_REMOTE_HOST=<%= scope.lookupvar("anthillpro_agent::anthill_remote_host") %>
+# IF CONNECT_VIA_RELAY
+#INSTALL_AGENT_REMOTE_PORT=7916
+# ELSE
+INSTALL_AGENT_REMOTE_PORT=7915
+INSTALL_AGENT_REMOTE_PORT_SSL=N
+INSTALL_AGENT_REMOTE_PORT_MUTUAL_AUTH=N
+# IF CONNECT_VIA_RELAY
+INSTALL_AGENT_RELAY_HTTP_PORT=
+# ELSE
+# INSTALL_AGENT_RELAY_HTTP_PORT=
+INSTALL_AGENT_NAME=`hostname`-Deployer
+INSTALL_AGENT_DIR=/opt/anthill/agents/deployer
+INSTALL_AGENT_CACHE_DIR=/var/anthill/.codestation/cache
+
+agent_count=1
+
+################################################################################
+# The installation script.
+################################################################################
+OUR_ANT_VERSION=1.7.1
+
+SHELL_NAME=$0
+SHELL_PATH=`dirname ${SHELL_NAME}`
+
+if [ "." = "$SHELL_PATH" ] 
+then
+    SHELL_PATH=`pwd`
+fi
+cd ${SHELL_PATH}
+
+ANT_HOME=opt/apache-ant-${OUR_ANT_VERSION}
+export ANT_HOME
+
+chmod +x opt/apache-ant-${OUR_ANT_VERSION}/bin/ant
+
+CLASSPATH=
+export CLASSPATH
+
+# ensure the directories exist, and the whole world can write to them!
+mkdir -p /var/anthill
+
+#install anthill service script
+cp anthill.initd.sh /etc/rc.d/init.d/anthill
+chmod ugoa+x /etc/rc.d/init.d/anthill
+/sbin/chkconfig --add anthill
+/sbin/chkconfig anthill on
+
+# Run the installation.
+i=0
+while [ $i -lt "$agent_count" ]
+do
+  opt/apache-ant-${OUR_ANT_VERSION}/bin/ant \
+    "-Dinstall-agent=true" \
+    "-Dinstall-server=false" \
+    "-Dinstall.java.home=$JAVA_HOME" \
+    "-Dinstall.agent.connect_via_relay=$CONNECT_VIA_RELAY" \
+    "-Dinstall.agent.jms.remote.host=$INSTALL_AGENT_REMOTE_HOST" \
+    "-Dinstall.agent.jms.remote.port=$INSTALL_AGENT_REMOTE_PORT" \
+    "-Dinstall.agent.relay.http.port=$INSTALL_AGENT_RELAY_HTTP_PORT" \
+    "-Dinstall.agent.remote.port.ssl=$INSTALL_AGENT_REMOTE_PORT_SSL" \
+    "-Dinstall.agent.remote.port.mutual_auth=$INSTALL_AGENT_REMOTE_PORT_MUTUAL_AUTH" \
+    "-Dinstall.agent.name=$INSTALL_AGENT_NAME-$i" \
+    "-Dinstall.agent.dir=$INSTALL_AGENT_DIR-$i" \
+    -f install.with.groovy.xml install-non-interactive
+
+
+# Tweak Agent properties:
+AGENT_PROPS_FILE=$INSTALL_AGENT_DIR-$i/conf/agent/installed.properties
+cat <<EOF>>$AGENT_PROPS_FILE
+codestation.cace.dir=$INSTALL_AGENT_CACHE_DIR
+agent/DeployRoot=/opt/sb-apps/
+agent/LogRoot=/var/sb-logs/
+agent/applications=none
+EOF
+
+  i=`expr $i + 1`
+done

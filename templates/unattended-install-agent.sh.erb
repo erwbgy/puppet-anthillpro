@@ -2,7 +2,7 @@
 #AGENT_JAVA_HOME=/usr/java/latest
 AGENT_JAVA_HOME=/usr/java/latest
 CONNECT_VIA_RELAY=N
-INSTALL_AGENT_REMOTE_HOST=<%= scope.lookupvar("anthillpro_agent::anthill_remote_host") %>
+INSTALL_AGENT_REMOTE_HOST=<%= scope.lookupvar("remote_host") %>
 # IF CONNECT_VIA_RELAY
 #INSTALL_AGENT_REMOTE_PORT=7916
 # ELSE

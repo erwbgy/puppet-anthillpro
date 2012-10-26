@@ -1,25 +1,34 @@
-class anthillpro_agent::config {
+class anthillpro_agent::config (
+  $remote_host = undef,
+  $tarball     = undef
+) {
+  if $remote_host == undef {
+    fail('anthillpro_agent::config remote_host parameter required')
+  }
+  if $tarball == undef {
+    fail('anthillpro_agent::config tarball parameter required')
+  }
   # defaults
   File {
     owner => 'puppet',
     group => 'puppet',
   }
-  file { "$anthillpro_agent::basedir":
+  file { '/root/anthillpro_agent':
     ensure => directory,
   }
   file { 'anthillpro_agent-tarball':
     ensure  => present,
-    path    => "$anthillpro_agent::basedir/$anthillpro_agent::install_tarball",
+    path    => "/root/anthillpro_agent/${tarball}",
     mode    => '0444',
-    source  => "puppet:///files/$anthillpro_agent::install_tarball",
-    require => File["$anthillpro_agent::basedir"],
+    source  => "puppet:///files/${tarball}",
+    require => File['/root/anthillpro_agent'],
   }
   exec { 'anthillpro_agent-unpack':
-    command     => "/bin/tar -C $anthillpro_agent::basedir -zxf '$anthillpro_agent::basedir/$anthillpro_agent::install_tarball'",
+    command     => "/bin/tar -C /root/anthillpro_agent -zxf '/root/anthillpro_agent/${tarball}'",
     require     => File['anthillpro_agent-tarball'],
-    creates     => "$anthillpro_agent::basedir/anthill3-install",
+    creates     => '/root/anthillpro_agent/anthill3-install',
   }
-  file { "$anthillpro_agent::basedir/anthill3-install/unattended-install-agent.sh":
+  file { '/root/anthillpro_agent/anthill3-install/unattended-install-agent.sh':
     ensure  => present,
     mode    => '0555',
     content => template('anthillpro_agent/unattended-install-agent.sh.erb'),

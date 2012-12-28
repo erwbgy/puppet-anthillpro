@@ -4,6 +4,6 @@ class anthillpro::agent::service {
     hasstatus  => true,
     hasrestart => true,
     enable     => true,
-    require    => Class['anthillpro::agent::config'],
+    require    => Class['anthillpro::agent::install'],
   }
 }

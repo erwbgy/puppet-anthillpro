@@ -31,14 +31,8 @@ class anthillpro::agent::config (
   file { '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh':
     ensure  => present,
     mode    => '0555',
-    content => template('anthillpro::agent/unattended-install-agent.sh.erb'),
+    content => template('anthillpro/agent/unattended-install-agent.sh.erb'),
     require => Exec['anthillpro::agent-unpack'],
-  }
-  file { [ '/opt/sb-apps', '/var/sb-logs', ]:
-    ensure => directory,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
   }
   file { '/var/log/anthillpro::agent.log':
     ensure => link,

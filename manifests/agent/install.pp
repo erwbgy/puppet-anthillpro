@@ -10,7 +10,7 @@ class anthillpro::agent::install {
   file { '/opt/anthill/agents/deployer-0/installed.properties':
     ensure  => present,
     mode    => '0444',
-    content => template('anthillpro::agent/installed.properties.erb'),
+    content => template('anthillpro/agent/installed.properties.erb'),
     notify  => Class['anthillpro::agent::service'],
     require => Exec['anthill-install'],
   }

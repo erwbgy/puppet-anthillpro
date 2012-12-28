@@ -61,7 +61,7 @@ class anthillpro::agent::install (
   }
   file { "/etc/rc.d/init.d/anthill":
     ensure  => present,
-    mode    => '0444',
+    mode    => '0555',
     content => template('anthillpro/agent/anthill.initd.sh.erb'),
     notify  => Class['anthillpro::agent::service'],
     require => Exec['anthillpro::agent-install'],

@@ -1,4 +1,4 @@
-codestation.cace.dir=/var/anthill/.codestation/cache
-agent/DeployRoot=/opt/sb-apps/
-agent/LogRoot=/var/sb-logs/
-agent/applications=none
+codestation.cache.dir=<%= @cache_root %>/.codestation/cache
+agent/DeployRoot=<%= @deploy_root %>/
+agent/LogRoot=<%= @log_root %>/
+agent/applications=<%= @applications %>

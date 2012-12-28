@@ -1,21 +1,14 @@
-#!/bin/sh
-#AGENT_JAVA_HOME=/usr/java/latest
-AGENT_JAVA_HOME=/usr/java/latest
+#!/bin/bash
+AGENT_JAVA_HOME=<%= @java_home %>
 CONNECT_VIA_RELAY=N
-INSTALL_AGENT_REMOTE_HOST=<%= scope.lookupvar("remote_host") %>
-# IF CONNECT_VIA_RELAY
-#INSTALL_AGENT_REMOTE_PORT=7916
-# ELSE
-INSTALL_AGENT_REMOTE_PORT=7915
+INSTALL_AGENT_REMOTE_HOST=<%= @remote_host %>
+INSTALL_AGENT_REMOTE_PORT=<%= @remote_port %>
 INSTALL_AGENT_REMOTE_PORT_SSL=N
 INSTALL_AGENT_REMOTE_PORT_MUTUAL_AUTH=N
-# IF CONNECT_VIA_RELAY
 INSTALL_AGENT_RELAY_HTTP_PORT=
-# ELSE
-# INSTALL_AGENT_RELAY_HTTP_PORT=
-INSTALL_AGENT_NAME=`hostname`-Deployer
-INSTALL_AGENT_DIR=/opt/anthill/agents/deployer
-INSTALL_AGENT_CACHE_DIR=/var/anthill/.codestation/cache
+INSTALL_AGENT_NAME=$(hostname)-Deployer
+INSTALL_AGENT_DIR=<%= @agent_root %>/agents/deployer
+INSTALL_AGENT_CACHE_DIR=<%= @cache_root %>/.codestation/cache
 
 agent_count=1
 
@@ -25,11 +18,11 @@ agent_count=1
 OUR_ANT_VERSION=1.7.1
 
 SHELL_NAME=$0
-SHELL_PATH=`dirname ${SHELL_NAME}`
+SHELL_PATH=$(dirname ${SHELL_NAME})
 
 if [ "." = "$SHELL_PATH" ] 
 then
-    SHELL_PATH=`pwd`
+    SHELL_PATH=$(pwd)
 fi
 cd ${SHELL_PATH}
 
@@ -42,7 +35,7 @@ CLASSPATH=
 export CLASSPATH
 
 # ensure the directories exist, and the whole world can write to them!
-mkdir -p /var/anthill
+mkdir -p <%= @cache_root %>
 
 #install anthill service script
 cp anthill.initd.sh /etc/rc.d/init.d/anthill
@@ -72,11 +65,11 @@ do
 # Tweak Agent properties:
 AGENT_PROPS_FILE=$INSTALL_AGENT_DIR-$i/conf/agent/installed.properties
 cat <<EOF>>$AGENT_PROPS_FILE
-codestation.cace.dir=$INSTALL_AGENT_CACHE_DIR
-agent/DeployRoot=/opt/sb-apps/
-agent/LogRoot=/var/sb-logs/
-agent/applications=none
+codestation.cache.dir=$INSTALL_AGENT_CACHE_DIR
+agent/DeployRoot=<%= @deploy_root %>/
+agent/LogRoot=<%= @log_root %>/
+agent/applications=<%= @applications %>
 EOF
 
-  i=`expr $i + 1`
+  i=$(expr $i + 1)
 done

@@ -30,15 +30,17 @@ class anthillpro::agent::install (
     require => File['/root/anthillpro::agent'],
   }
   exec { 'anthillpro::agent-unpack':
-    command     => "/bin/tar -C /root/anthillpro::agent -zxf '/root/anthillpro::agent/${tarball}'",
-    require     => File['anthillpro::agent-tarball'],
-    creates     => '/root/anthillpro::agent/anthill3-install',
+    command => "/bin/tar -C /root/anthillpro::agent -zxf '/root/anthillpro::agent/${tarball}'",
+    require => File['anthillpro::agent-tarball'],
+    creates => '/root/anthillpro::agent/anthill3-install',
+    notify  => Exec['anthillpro::agent-directories'],
   }
   file { '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh':
     ensure  => present,
     mode    => '0555',
     content => template('anthillpro/agent/unattended-install-agent.sh.erb'),
     require => Exec['anthillpro::agent-unpack'],
+    notify  => Exec['anthillpro::agent-directories'],
   }
   exec { 'anthillpro::agent-directories':
     command     => "/bin/mkdir -p '${agent_root}' '${cache_root}' '${deploy_root}' '${log_root}'",
@@ -46,10 +48,7 @@ class anthillpro::agent::install (
   }
   exec { 'anthillpro::agent-install':
     command => '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh',
-    require => [
-      File['/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh'],
-      Exec['anthillpro::agent-directories'],
-    ],
+    require => File['/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh'],
     creates => "${agent_root}/agents/deployer",
   }
   file { "${agent_root}/agents/deployer/conf/agent/installed.properties":

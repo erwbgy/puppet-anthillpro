@@ -1,5 +1,6 @@
 class anthillpro::agent::install (
   $agent_root,
+  $ant_home,
   $applications,
   $cache_root,
   $deploy_root,
@@ -9,6 +10,10 @@ class anthillpro::agent::install (
   $remote_port,
   $tarball,
 ) {
+  if ! defined(Package['perl']) { package { 'perl': ensure => installed, } }
+  if ! defined(Package['tar'])  { package { 'tar':  ensure => installed, } }
+  if ! defined(Package['gzip']) { package { 'gzip': ensure => installed, } }
+  if ! defined(Package['bash']) { package { 'bash': ensure => installed, } }
   # defaults
   File {
     owner => 'root',
@@ -35,23 +40,25 @@ class anthillpro::agent::install (
     content => template('anthillpro/agent/unattended-install-agent.sh.erb'),
     require => Exec['anthillpro::agent-unpack'],
   }
+  exec { 'anthillpro::agent-directories':
+    command     => "/bin/mkdir -p '${agent_root}' '${cache_root}' '${deploy_root}' '${log_root}'"
+    refreshonly => true,
+  }
   file { "${log_root}/anthillpro::agent.log":
     ensure => link,
-    target => "${agent_root}/agents/deployer-0/var/log/ah3agent.out",
+    target => "${agent_root}/agents/deployer/var/log/ah3agent.out",
   }
-  if ! defined(Package['perl']) { package { 'perl': ensure => installed, } }
-  if ! defined(Package['tar'])  { package { 'tar':  ensure => installed, } }
-  if ! defined(Package['gzip']) { package { 'gzip': ensure => installed, } }
-  exec { 'anthill-install':
+  exec { 'anthillpro::agent-install':
     command     => '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh',
     require     => File['agent/anthill3-install/unattended-install-agent.sh'],
-    creates     => "${agent_root}/agents/deployer-0",
+    creates     => "${agent_root}/agents/deployer",
+    require     => Exec['anthillpro::agent-directories'],
   }
-  file { "${agent_root}/agents/deployer-0/installed.properties":
+  file { "${agent_root}/agents/deployer/conf/agent/installed.properties":
     ensure  => present,
     mode    => '0444',
     content => template('anthillpro/agent/installed.properties.erb'),
     notify  => Class['anthillpro::agent::service'],
-    require => Exec['anthill-install'],
+    require => Exec['anthillpro::agent-install'],
   }
 }

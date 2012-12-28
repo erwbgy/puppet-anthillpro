@@ -11,10 +11,27 @@ Include the anthillpro module in your puppet configuration:
 and add required hiera configuration - for example:
 
     anthillpro::agent:
-      remote_host: 10.0.17.9
-      tarball: 'Anthill Agent Installation 3.7.3.tar.gz'
+      ant_home:     'opt/apache-ant-1.7.1'
+      remote_host:  '10.0.17.9'
+      tarball:      'Anthill Agent Installation 3.7.3.tar.gz'
+
+or with all the options:
+
+    anthillpro::agent:
+      agent_root:   '/opt/anthill'
+      ant_home:     '/usr'
+      applications: 'none'
+      cache_root:   '/var/anthill/cache'
+      deploy_root:  '/var/anthill/deploy'
+      java_home:    '/usr/java/latest'
+      log_root:     '/var/log/anthill'
+      remote_host:  '10.0.17.9'
+      remote_port:  '7915'
+      tarball:      'Anthill Agent Installation 3.7.3.tar.gz'
 
 * *agent_root*: The root directory of the agent installation. Default: '/opt/anthill'
+
+* *ant_home*: The root directory of the Apache Ant installation to use.  Default: 'opt/apache-ant-1.7.1' (relative to the unpacked installation tarball)
 
 * *applications*: Default: 'none'
 

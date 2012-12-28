@@ -1,11 +1,12 @@
 class anthillpro::agent (
   $remote_host,
   $agent_root   = '/opt/anthill',
+  $ant_home     = 'opt/apache-ant-1.7.1',
   $applications = 'none',
-  $cache_root   = '/var/anthill',
+  $cache_root   = '/var/anthill/cache',
   $deploy_root  = '/var/anthill/deploy',
   $java_home    = '/usr/java/latest',
-  $log_root     = '/var/anthill/logs',
+  $log_root     = '/var/log/anthill',
   $remote_port  = '7915',
   $tarball      = 'Anthill Agent Installation 3.7.3.tar.gz',
 ) {

@@ -1,53 +1,34 @@
 #!/bin/bash
-AGENT_JAVA_HOME=<%= @java_home %>
-CONNECT_VIA_RELAY=N
-INSTALL_AGENT_REMOTE_HOST=<%= @remote_host %>
-INSTALL_AGENT_REMOTE_PORT=<%= @remote_port %>
-INSTALL_AGENT_REMOTE_PORT_SSL=N
-INSTALL_AGENT_REMOTE_PORT_MUTUAL_AUTH=N
-INSTALL_AGENT_RELAY_HTTP_PORT=
-INSTALL_AGENT_NAME=$(hostname)-Deployer
-INSTALL_AGENT_DIR=<%= @agent_root %>/agents/deployer
-INSTALL_AGENT_CACHE_DIR=<%= @cache_root %>/.codestation/cache
 
-agent_count=1
+# Config
+export AGENT_JAVA_HOME=<%= @java_home %>
+export ANT_HOME=<%= @ant_home %>
+export CONNECT_VIA_RELAY=N
+export INSTALL_AGENT_REMOTE_HOST=<%= @remote_host %>
+export INSTALL_AGENT_REMOTE_PORT=<%= @remote_port %>
+export INSTALL_AGENT_REMOTE_PORT_SSL=N
+export INSTALL_AGENT_REMOTE_PORT_MUTUAL_AUTH=N
+export INSTALL_AGENT_RELAY_HTTP_PORT=
+export INSTALL_AGENT_NAME=$(hostname)-Deployer
+export INSTALL_AGENT_DIR=<%= @agent_root %>/agents/deployer
+export INSTALL_AGENT_CACHE_DIR=<%= @cache_root %>/.codestation/cache
 
-################################################################################
-# The installation script.
-################################################################################
-OUR_ANT_VERSION=1.7.1
-
+# Setup
 SHELL_NAME=$0
 SHELL_PATH=$(dirname ${SHELL_NAME})
 
-if [ "." = "$SHELL_PATH" ] 
+if test "." = "$SHELL_PATH"
 then
     SHELL_PATH=$(pwd)
 fi
 cd ${SHELL_PATH}
 
-ANT_HOME=opt/apache-ant-${OUR_ANT_VERSION}
-export ANT_HOME
+unset CLASSPATH
 
-chmod +x opt/apache-ant-${OUR_ANT_VERSION}/bin/ant
+mkdir -p $INSTALL_AGENT_CACHE_DIR
 
-CLASSPATH=
-export CLASSPATH
-
-# ensure the directories exist, and the whole world can write to them!
-mkdir -p <%= @cache_root %>
-
-#install anthill service script
-cp anthill.initd.sh /etc/rc.d/init.d/anthill
-chmod ugoa+x /etc/rc.d/init.d/anthill
-/sbin/chkconfig --add anthill
-/sbin/chkconfig anthill on
-
-# Run the installation.
-i=0
-while [ $i -lt "$agent_count" ]
-do
-  opt/apache-ant-${OUR_ANT_VERSION}/bin/ant \
+# Run the installation
+exec ${ANT_HOME}/bin/ant \
     "-Dinstall-agent=true" \
     "-Dinstall-server=false" \
     "-Dinstall.java.home=$JAVA_HOME" \
@@ -57,19 +38,7 @@ do
     "-Dinstall.agent.relay.http.port=$INSTALL_AGENT_RELAY_HTTP_PORT" \
     "-Dinstall.agent.remote.port.ssl=$INSTALL_AGENT_REMOTE_PORT_SSL" \
     "-Dinstall.agent.remote.port.mutual_auth=$INSTALL_AGENT_REMOTE_PORT_MUTUAL_AUTH" \
-    "-Dinstall.agent.name=$INSTALL_AGENT_NAME-$i" \
-    "-Dinstall.agent.dir=$INSTALL_AGENT_DIR-$i" \
+    "-Dinstall.agent.name=$INSTALL_AGENT_NAME" \
+    "-Dinstall.agent.dir=$INSTALL_AGENT_DIR" \
     -f install.with.groovy.xml install-non-interactive
 
-
-# Tweak Agent properties:
-AGENT_PROPS_FILE=$INSTALL_AGENT_DIR-$i/conf/agent/installed.properties
-cat <<EOF>>$AGENT_PROPS_FILE
-codestation.cache.dir=$INSTALL_AGENT_CACHE_DIR
-agent/DeployRoot=<%= @deploy_root %>/
-agent/LogRoot=<%= @log_root %>/
-agent/applications=<%= @applications %>
-EOF
-
-  i=$(expr $i + 1)
-done

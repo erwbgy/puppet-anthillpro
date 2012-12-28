@@ -1,27 +1,24 @@
 class anthillpro::agent (
-  $remote_host = '10.5.1.109',
-  $tarball     = 'Anthill Agent Installation 3.7.3.tar.gz',
-  $use_hiera   = true
+  $remote_host,
+  $agent_root   = '/opt/anthill',
+  $applications = 'none',
+  $cache_root   = '/var/anthill',
+  $deploy_root  = '/var/anthill/deploy',
+  $java_home    = '/usr/java/latest',
+  $log_root     = '/var/anthill/logs',
+  $remote_port  = '7915',
+  $tarball      = 'Anthill Agent Installation 3.7.3.tar.gz',
 ) {
-  if $use_hiera {
-    $agent = hiera('anthillpro::agent')
-    class { 'anthillpro::agent::config':
-      remote_host => $agent['remote_host'] ? {
-        undef   => $remote_host,
-        default => $agent['remote_host']
-      },
-      tarball => $agent['tarball'] ? {
-        undef   => $remote_host,
-        default => $agent['tarball']
-      },
-    }
+  class { 'anthillpro::agent::install':
+    agent_root   => $agent_root,
+    applications => $applications,
+    cache_root   => $cache_root,
+    deploy_root  => $deploy_root,
+    java_home    => $java_home,
+    log_root     => $log_root,
+    remote_host  => $remote_host,
+    remote_port  => $remote_port,
+    tarball      => $tarball,
   }
-  else {
-    class { 'anthillpro::agent::config':
-      remote_host => $remote_host,
-      tarball     => $tarball,
-    }
-  }
-  include anthillpro::agent::install
   include anthillpro::agent::service
 }

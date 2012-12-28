@@ -2,7 +2,7 @@ class anthillpro::agent::install (
   $agent_root,
   $ant_home,
   $applications,
-  $cache_root,
+  $var_root,
   $deploy_root,
   $java_home,
   $log_root,
@@ -43,7 +43,7 @@ class anthillpro::agent::install (
     notify  => Exec['anthillpro::agent-directories'],
   }
   exec { 'anthillpro::agent-directories':
-    command     => "/bin/mkdir -p '${agent_root}' '${cache_root}' '${deploy_root}' '${log_root}'",
+    command     => "/bin/mkdir -p '${agent_root}' '${var_root}' '${deploy_root}' '${log_root}'",
     refreshonly => true,
   }
   exec { 'anthillpro::agent-install':
@@ -51,12 +51,23 @@ class anthillpro::agent::install (
     require => File['/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh'],
     creates => "${agent_root}/agents/deployer",
   }
-  file { "${agent_root}/agents/deployer/conf/agent/installed.properties":
-    ensure  => present,
-    mode    => '0444',
-    content => template('anthillpro/agent/installed.properties.erb'),
-    notify  => Class['anthillpro::agent::service'],
-    require => Exec['anthillpro::agent-install'],
+  #file { "${agent_root}/agents/deployer/conf/agent/installed.properties":
+  #  ensure  => present,
+  #  mode    => '0444',
+  #  content => template('anthillpro/agent/installed.properties.erb'),
+  #  notify  => Class['anthillpro::agent::service'],
+  #  require => Exec['anthillpro::agent-install'],
+  #}
+  file { "${agent_root}/agents/deployer/var":
+    ensure  => link,
+    target  => ${var_root},
+    force   => true,
+  }
+  file { "${agent_root}/agents/deployer/var/log":
+    ensure  => link,
+    target  => ${log_root},
+    force   => true,
+    require => File["${agent_root}/agents/deployer/var"],
   }
   file { "/etc/rc.d/init.d/anthill":
     ensure  => present,

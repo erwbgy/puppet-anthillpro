@@ -19,21 +19,19 @@ or with all the options:
     anthillpro::agent::agent_root:   '/opt/anthill'
     anthillpro::agent::ant_home:     '/usr'
     anthillpro::agent::applications: 'none'
-    anthillpro::agent::cache_root:   '/var/anthill/cache'
     anthillpro::agent::deploy_root:  '/var/anthill/deploy'
     anthillpro::agent::java_home:    '/usr/java/latest'
     anthillpro::agent::log_root:     '/var/log/anthill'
     anthillpro::agent::remote_host:  '10.5.1.109'
     anthillpro::agent::remote_port:  '7915'
     anthillpro::agent::tarball:      'Anthill Agent Installation 3.7.3.tar.gz'
+    anthillpro::agent::var_root:     '/var/anthill'
 
 * *agent_root*: The root directory of the agent installation. Default: '/opt/anthill'
 
 * *ant_home*: The root directory of the Apache Ant installation to use.  Default: 'opt/apache-ant-1.7.1' (relative to the unpacked installation tarball)
 
 * *applications*: Default: 'none'
-
-* *cache_root*: The root directory under which the agent cache directory is created.  Default: '/var/anthill'
 
 * *deploy_root*: The root directory under which application deployment artefacts are stored. Default: '/var/anthill/deploy'
 
@@ -46,6 +44,8 @@ or with all the options:
 * *remote_port*: The port to connect to on the Anthull server. Default: '7915'
 
 * *tarball*: The Anthill Agent installation tarball. Default: 'Anthill Agent Installation 3.7.3.tar.gz'
+
+* *var_root*: The root directory under which runtime files are created (eg. caches, temporary files etc).  Default: '/var/anthill'
 
 ## TODO
 

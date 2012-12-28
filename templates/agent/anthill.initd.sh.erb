@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# chkconfig: 2345 87 13
+# description: Anthill Agent
+# Source function library.
+. /etc/init.d/functions
+
+NAME="Anthill"
+BASE_DIR=<%= agent_root %>
+BASE_DIR_BIN=$BASE_DIR/agents/deployer-0/bin
+PIDFILE=$BASE_DIR/pid
+
+start() {
+        echo -n "Starting ${NAME}: "
+        if [ -f $PIDFILE ]; then
+                PID=`cat $PIDFILE`
+                echo ${NAME} already running: $PID
+                exit 2;
+        else
+                cd $BASE_DIR_BIN
+                ./ah3agent start
+                RETVAL=$?
+                echo
+                echo `ps -eadfwww | grep 'com.urbancode.anthill3.agent.AgentWorker' | grep -v 'grep' | awk '{print $2}'` > $PIDFILE
+                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/${NAME}
+                return $RETVAL
+        fi
+}
+stop() {
+        echo -n "Shutting down ${NAME}: "
+        echo
+        cd $BASE_DIR_BIN
+        ./ah3agent stop
+        echo
+        rm -f $PIDFILE
+        rm -f /var/lock/subsys/${NAME}
+        return 0
+}
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        if [ -f $PIDFILE ]; then
+           echo ${NAME} is Running.
+        else
+           echo ${NAME} is Stopped.
+        fi
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+
+        echo "Usage:  {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+exit $?

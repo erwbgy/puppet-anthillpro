@@ -44,10 +44,6 @@ class anthillpro::agent::install (
     command     => "/bin/mkdir -p '${agent_root}' '${cache_root}' '${deploy_root}' '${log_root}'",
     refreshonly => true,
   }
-  file { "${log_root}/anthillpro::agent.log":
-    ensure => link,
-    target => "${agent_root}/agents/deployer/var/log/ah3agent.out",
-  }
   exec { 'anthillpro::agent-install':
     command => '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh',
     require => [

@@ -41,7 +41,7 @@ class anthillpro::agent::install (
     require => Exec['anthillpro::agent-unpack'],
   }
   exec { 'anthillpro::agent-directories':
-    command     => "/bin/mkdir -p '${agent_root}' '${cache_root}' '${deploy_root}' '${log_root}'"
+    command     => "/bin/mkdir -p '${agent_root}' '${cache_root}' '${deploy_root}' '${log_root}'",
     refreshonly => true,
   }
   file { "${log_root}/anthillpro::agent.log":

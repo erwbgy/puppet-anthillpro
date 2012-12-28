@@ -31,7 +31,7 @@ mkdir -p $INSTALL_AGENT_CACHE_DIR
 exec ${ANT_HOME}/bin/ant \
     "-Dinstall-agent=true" \
     "-Dinstall-server=false" \
-    "-Dinstall.java.home=$JAVA_HOME" \
+    "-Dinstall.java.home=$AGENT_JAVA_HOME" \
     "-Dinstall.agent.connect_via_relay=$CONNECT_VIA_RELAY" \
     "-Dinstall.agent.jms.remote.host=$INSTALL_AGENT_REMOTE_HOST" \
     "-Dinstall.agent.jms.remote.port=$INSTALL_AGENT_REMOTE_PORT" \

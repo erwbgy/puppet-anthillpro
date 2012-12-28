@@ -2,13 +2,13 @@ class anthillpro::agent::install (
   $agent_root,
   $ant_home,
   $applications,
-  $var_root,
   $deploy_root,
   $java_home,
   $log_root,
   $remote_host,
   $remote_port,
   $tarball,
+  $var_root,
 ) {
   if ! defined(Package['perl']) { package { 'perl': ensure => installed, } }
   if ! defined(Package['tar'])  { package { 'tar':  ensure => installed, } }
@@ -60,12 +60,12 @@ class anthillpro::agent::install (
   #}
   file { "${agent_root}/agents/deployer/var":
     ensure  => link,
-    target  => ${var_root},
+    target  => $var_root,
     force   => true,
   }
   file { "${agent_root}/agents/deployer/var/log":
     ensure  => link,
-    target  => ${log_root},
+    target  => $log_root,
     force   => true,
     require => File["${agent_root}/agents/deployer/var"],
   }

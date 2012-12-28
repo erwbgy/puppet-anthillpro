@@ -63,6 +63,7 @@ class anthillpro::agent::install (
     target  => $var_root,
     force   => true,
     notify  => Class['anthillpro::agent::service'],
+    require => Exec['anthillpro::agent-install'],
   }
   file { "${agent_root}/agents/deployer/var/log":
     ensure  => link,

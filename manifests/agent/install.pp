@@ -49,10 +49,12 @@ class anthillpro::agent::install (
     target => "${agent_root}/agents/deployer/var/log/ah3agent.out",
   }
   exec { 'anthillpro::agent-install':
-    command     => '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh',
-    require     => File['agent/anthill3-install/unattended-install-agent.sh'],
-    creates     => "${agent_root}/agents/deployer",
-    require     => Exec['anthillpro::agent-directories'],
+    command => '/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh',
+    require => [
+      File['/root/anthillpro::agent/anthill3-install/unattended-install-agent.sh'],
+      Exec['anthillpro::agent-directories'],
+    ],
+    creates => "${agent_root}/agents/deployer",
   }
   file { "${agent_root}/agents/deployer/conf/agent/installed.properties":
     ensure  => present,

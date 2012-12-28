@@ -12,6 +12,7 @@ class anthillpro::agent (
 ) {
   class { 'anthillpro::agent::install':
     agent_root   => $agent_root,
+    ant_home     => $ant_home,
     applications => $applications,
     cache_root   => $cache_root,
     deploy_root  => $deploy_root,

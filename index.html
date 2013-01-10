@@ -44,14 +44,37 @@
 
 <p>and add required hiera configuration - for example:</p>
 
-<pre><code>anthillpro::agent:
-  remote_host: 10.0.17.9
-  tarball: 'Anthill Agent Installation 3.7.3.tar.gz'
+<pre><code>anthillpro::agent::ant_home:     'opt/apache-ant-1.7.1'
+anthillpro::agent::remote_host:  '10.0.17.9'
+anthillpro::agent::tarball:      'Anthill Agent Installation 3.7.3.tar.gz'
 </code></pre>
 
-<h2>TODO</h2>
+<p>or with all the options:</p>
 
-<p>Make lots of things configurable.</p>
+<pre><code>anthillpro::agent::agent_root:   '/opt/anthill'
+anthillpro::agent::ant_home:     '/usr'
+anthillpro::agent::applications: 'none'
+anthillpro::agent::deploy_root:  '/var/anthill/deploy'
+anthillpro::agent::java_home:    '/usr/java/latest'
+anthillpro::agent::log_root:     '/var/log/anthill'
+anthillpro::agent::remote_host:  '10.5.1.109'
+anthillpro::agent::remote_port:  '7915'
+anthillpro::agent::tarball:      'Anthill Agent Installation 3.7.3.tar.gz'
+anthillpro::agent::var_root:     '/var/anthill'
+</code></pre>
+
+<ul>
+<li><p><em>agent_root</em>: The root directory of the agent installation. Default: '/opt/anthill'</p></li>
+<li><p><em>ant_home</em>: The root directory of the Apache Ant installation to use.  Default: 'opt/apache-ant-1.7.1' (relative to the unpacked installation tarball)</p></li>
+<li><p><em>applications</em>: Default: 'none'</p></li>
+<li><p><em>deploy_root</em>: The root directory under which application deployment artefacts are stored. Default: '/var/anthill/deploy'</p></li>
+<li><p><em>java_home</em>: The root directory of the Java virtual machine to use.  Default: '/usr/java/latest' (and '/usr/java/latest/bin/java' will be used)</p></li>
+<li><p><em>log_root</em>: The root directory under which log files will be written. Default: '/var/log/anthill'</p></li>
+<li><p><em>remote_host</em>:  The hostname/IP of the Anthill server to connect to.  REQUIRED.</p></li>
+<li><p><em>remote_port</em>: The port to connect to on the Anthull server. Default: '7915'</p></li>
+<li><p><em>tarball</em>: The Anthill Agent installation tarball. Default: 'Anthill Agent Installation 3.7.3.tar.gz'</p></li>
+<li><p><em>var_root</em>: The root directory under which runtime files are created (eg. caches, temporary files etc).  Default: '/var/anthill'</p></li>
+</ul><h2>TODO</h2>
 
 <p>Support installation and setup of the Anthill server.</p>
 
@@ -71,7 +94,17 @@
       </footer>
     </div>
 
-    
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-37513727-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
 
   </body>
 </html>
